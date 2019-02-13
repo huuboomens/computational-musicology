@@ -6,3 +6,7 @@
 
 #### Sub-sub-heading
 
+*italics*
+
+**bold**
+
