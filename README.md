@@ -22,10 +22,10 @@ The summarize command doesn’t seem to work on the bebop playlist and I can’t
 
 ## Assignment 2
 
-![Energy and Valence](energy-valence.png)
-![Danceability and Tempo](dance-tempo.png)
+![Energy and Valence](Energy-valence.png)
+![Danceability and Tempo](Dance-tempo.png)
 
-
+These two scatterplots visualize the findings from the first assignment. The differences between the styles are as expected, although the differences are not actually that big: swing is more danceable and has more valence than bebop and cooljazz and energy is lowest in cooljazz. A point of interest is that the scatterplot of energy and valence seems to suggest a positive correlation between the two. Although this is ofcourse not enough evidence, this could mean that Spotify uses one of these features to compute the other one.
 
 # Big title
 
