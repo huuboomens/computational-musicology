@@ -22,7 +22,8 @@ The summarize command doesn’t seem to work on the bebop playlist and I can’t
 
 ## Assignment 2
 
-
+![Energy and Valence](energy-valence.png)
+![Danceability and Tempo](dance-tempo.png)
 
 
 
