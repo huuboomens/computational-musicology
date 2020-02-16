@@ -20,6 +20,8 @@ Tracks with odd time            6         |          4          |        2
 
 The summarize command doesn’t seem to work on the bebop playlist and I can’t seem to fix it it. If I view the list the data is there however (It's fixed now!)... The comparison between cool jazz and swing does however give the expected results. Danceability, energy and valence are higher in swing, as one would expect it to be in dance music. Also there are less tunes with odd time signature in swing, which I’d say would also be more expected in dance music. I noticed however that one of the tunes that was listed as odd time signature tune in the bebop list was Take Five by the Dave Brubeck Quartet. I don’t think that Take Five could be classified as bebop tune in anyway, so this raises the question whether these list are made carefully enough and with what criteria the tunes are divided among the styles.
 
+## Assignment 2
+
 
 
 
