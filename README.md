@@ -1,3 +1,5 @@
+compmus
+
 ## Assignment 1
 
 For my portfolio I want to check out and compare playlists of different jazz genres, and see whether Spotify recognizes similar characteristic differences between the styles in their measured features as expected in these genres. I found a couple of playlists to research; a few from Spotify, “the sound of…” playlists, and playlists from the Lincoln Center, a famous jazz venue in the USA. For this comparison it seems to me that the best styles to research are the most common and famous and big directions in jazz: swing, bebop, cool jazz and maybe hardbop as well. A difference to expect would for example be danceability between swing and cool jazz, as swing originated as dance music and later jazz changed more to a concert style of music. For now I compared the “the sound of…” playlists. In order to do so I took the means of features that seemed relevant to see if there were any points of interest.
