@@ -1,4 +1,12 @@
-compmus
+# Load libraries (every time)
+
+library(tidyverse)
+library(spotifyr)
+
+# Set Spotify access variables (every time)
+
+Sys.setenv(SPOTIFY_CLIENT_ID = 'fa5df116b34e4a778f295a41cd8d258b')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'd37387cf974844cebe470406970c19ee')
 
 ## Assignment 1
 
