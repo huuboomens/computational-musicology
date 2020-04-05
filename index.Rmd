@@ -580,4 +580,5 @@ From what I have seen so far, computational methods and Spotify features have so
 As far as my own work is concerned, I have not learned a lot more about the music itself, but I have learned a huge deal about what you can do with a computer to extract information about the music out of it! My findings would then obviously be mostly relevant to someone who would be interested in what different styles of jazz are and how you this is reflected in the audio. What I think is most important about what I found is that with a little further development, especially the chroma features regarding harmony, computational methods for jazz music could be very strong and not lacking at all.
 
 Thank you for reading!
+
 Huub
