@@ -36,8 +36,104 @@ jazzstyles <-
     bind_rows(swing %>% mutate(playlist = "swing")) %>%
     bind_rows(cool %>% mutate(playlist = "cool"))
 ```
+### Introduction
 
-### confusion matrix 
+```{r}
+danceability_bebop <-
+  bebop %>% summarise(M = mean(danceability, na.rm = TRUE), SD =               sd(danceability, na.rm = TRUE))
+danceability_swing <-
+  swing %>% summarise(M = mean(danceability, na.rm = TRUE), SD =               sd(danceability, na.rm = TRUE))
+danceability_cool <-
+ cool %>% summarise(M = mean(danceability, na.rm = TRUE), SD =               sd(danceability, na.rm = TRUE))
+danceability <-
+ danceability_bebop %>% mutate(playlist = "bebop") %>%
+ bind_rows(danceability_cool %>% mutate(playlist = "cool")) %>%
+ bind_rows(danceability_swing %>% mutate(playlist = "swing"))
+
+
+energy_bebop <-
+  bebop %>% summarise(M = mean(energy, na.rm = TRUE), SD =                     sd(energy, na.rm = TRUE))
+energy_swing <-
+  swing %>% summarise(M = mean(energy, na.rm = TRUE), SD =                     sd(energy,       na.rm = TRUE))
+energy_cool <-
+  cool %>% summarise(M = mean(energy, na.rm = TRUE), SD =                     sd(energy, na.rm = TRUE))
+energy <-
+ energy_bebop %>% mutate(playlist = "bebop") %>%
+ bind_rows(energy_cool %>% mutate(playlist = "cool")) %>%
+ bind_rows(energy_swing %>% mutate(playlist = "swing"))
+  
+
+loudness_bebop <-  
+bebop %>% summarise(M = mean(loudness, na.rm = TRUE), SD = sd(loudness, na.rm = TRUE))
+loudness_swing <-
+swing %>% summarise(M = mean(loudness, na.rm = TRUE), SD = sd(loudness, na.rm = TRUE))
+loudness_cool <-
+cool %>% summarise(M = mean(loudness, na.rm = TRUE), SD = sd(loudness, na.rm = TRUE))
+loudness <-
+ loudness_bebop %>% mutate(playlist = "bebop") %>%
+ bind_rows(loudness_cool %>% mutate(playlist = "cool")) %>%
+ bind_rows(loudness_swing %>% mutate(playlist = "swing"))
+
+valence_bebop <-
+bebop %>% summarise(M = mean(valence, na.rm = TRUE), SD = sd(valence))
+valence_swing <-
+swing %>% summarise(M = mean(valence, na.rm = TRUE), SD = sd(valence))
+valence_cool <-
+cool %>% summarise(M = mean(valence, na.rm = TRUE), SD = sd(valence))
+valence <-
+ valence_bebop %>% mutate(playlist = "bebop") %>%
+ bind_rows(valence_cool %>% mutate(playlist = "cool")) %>%
+ bind_rows(valence_swing %>% mutate(playlist = "swing"))
+
+tempo_bebop <-
+bebop %>% summarise(M = mean(tempo, na.rm = TRUE), SD = sd(tempo, na.rm = TRUE))
+tempo_swing <-
+swing %>% summarise(M = mean(tempo, na.rm = TRUE), SD = sd(tempo, na.rm = TRUE))
+tempo_cool <-
+cool %>% summarise(M = mean(tempo, na.rm = TRUE), SD = sd(tempo, na.rm = TRUE))
+tempo <-
+ tempo_bebop %>% mutate(playlist = "bebop") %>%
+ bind_rows(tempo_cool %>% mutate(playlist = "cool")) %>%
+ bind_rows(tempo_swing %>% mutate(playlist = "swing"))
+```
+```{r}
+danceability %>%
+   ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'danceability')
+
+energy %>%
+  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'energy')
+
+loudness %>%
+  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'loudness')
+
+valence %>%
+  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'valence')
+
+tempo %>%
+  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'tempo')
+```
+
+***
+For my portfolio I want to check out and compare playlists of different jazz genres, and see whether Spotify recognizes similar characteristic differences between the styles in their measured features as expected in these genres. The playlist I am going to use are the "sound of.." playlists. For this comparison it seems to me that the best styles to research are the most common and famous and big directions in jazz: swing, bebop, cool jazz. A difference to expect would for example be danceability between swing and cool jazz, as swing originated as dance music and later jazz changed more to a concert style of music. In order to do so I took the means of features that seemed relevant to see if there were any points of interest.
+
+The comparison between cool jazz and swing does however give the expected results. Danceability, energy and valence are higher in swing, as one would expect it to be in dance music. Also there are less tunes with odd time signature in swing, which I’d say would also be more expected in dance music. I noticed however that one of the tunes that was listed as odd time signature tune in the bebop list was Take Five by the Dave Brubeck Quartet. I don’t think that Take Five could be classified as bebop tune in anyway, so this raises the question whether these list are made carefully enough and with what criteria the tunes are divided among the styles.
+
+
+### Jazz visualized
+
+```{r}
+jazzstyles %>%
+  ggplot(aes(x = valence, y = energy, color = playlist)) + geom_point()
+
+jazzstyles %>%
+  ggplot(aes(x = danceability, y = tempo, color = playlist)) + geom_point()
+```
+
+***
+These two scatterplots visualize the findings from the first tab. The differences between the styles are as expected, although the differences are not actually that big: swing is more danceable and has more valence than bebop and cool jazz and energy is lowest in cool jazz. A point of interest is that the scatterplot of energy and valence seems to suggest a positive correlation between the two. Although this is ofcourse not enough evidence, this could mean that Spotify uses one of these features to compute the other one.
+
+
+### What is cool?
 
 ```{r}
 bebop_ <- 
@@ -52,6 +148,7 @@ cool_ <-
     get_playlist_audio_features('thesoundsofspotify', '3RtFvzIXD7ulUCXkWdIOWW') %>% 
     slice(1:20) %>% 
     add_audio_analysis
+
 
 jazzstyles_ <- 
     bebop_ %>% mutate(playlist = "bebop") %>% 
@@ -76,6 +173,7 @@ jazzstyles_ <-
     mutate_at(vars(pitches, timbre), map, bind_rows) %>% 
     unnest(cols = c(pitches, timbre))
 
+
 jazzstyles_class <- 
     recipe(playlist ~
                danceability +
@@ -96,11 +194,36 @@ jazzstyles_class <-
            data = jazzstyles_) %>% 
     step_center(all_predictors()) %>%
     step_scale(all_predictors()) %>%
-    # step_range(all_predictors()) %>% 
+   step_range(all_predictors()) %>% 
     prep(jazzstyles_) %>% 
     juice
 
+
 jazzstyles_cv <- jazzstyles_class %>% vfold_cv(5)
+
+jazzstyles_forest <- 
+    rand_forest(mode = 'classification') %>% 
+    set_engine('randomForest')
+predict_forest <- function(split)
+    fit(jazzstyles_forest, playlist ~ ., data = analysis(split)) %>% 
+    predict(assessment(split), type = 'class') %>%
+    bind_cols(assessment(split))
+
+
+jazzstyles_class %>% 
+    fit(jazzstyles_forest, playlist ~ ., data = .) %>% 
+    pluck('fit') %>% 
+    randomForest::varImpPlot()
+```
+
+***
+The question now is what are really the distinctive features? When I run the forest plot, the results differ but the distinctive features are always more or less duration, valence and timbre components, specifically number 2, 3, 6 and 12. Especially number 6 scores very high. So it seems that for Spotify's danceability and energy aren't even that big factors in deciding the style, or at least the playlist... 
+
+
+### Does it really matter?
+
+```{r}
+
 
 jazzstyles_knn <- 
     nearest_neighbor(mode = 'classification', neighbors = 1) %>% 
@@ -110,18 +233,6 @@ predict_knn <- function(split)
     predict(assessment(split), type = 'class') %>%
     bind_cols(assessment(split))
 
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_knn)) %>% unnest(pred) %>% 
-    conf_mat(truth = playlist, estimate = .pred_class)
-
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_knn)) %>% unnest(pred) %>% 
-    conf_mat(truth = playlist, estimate = .pred_class) %>% 
-    autoplot(type = 'heatmap')
-
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_knn)) %>% unnest(pred) %>% 
-    metric_set(accuracy, kap, j_index)(truth = playlist, estimate = .pred_class)
 
 jazzstyles_multinom <- 
     multinom_reg(mode = 'classification', penalty = 0.1) %>% 
@@ -131,17 +242,6 @@ predict_multinom <- function(split)
     predict(assessment(split), type = 'class') %>%
     bind_cols(assessment(split))
 
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_multinom)) %>% unnest(pred) %>% 
-    metric_set(accuracy, kap, j_index)(truth = playlist, estimate = .pred_class)
-
-jazzstyles_class %>%
-    fit(jazzstyles_multinom, playlist ~ ., data = .) %>%
-    pluck('fit') %>%
-    coef(s = 0)
-
-
-
 jazzstyles_tree <- 
     decision_tree(mode = 'classification') %>%
     set_engine('C5.0')
@@ -150,46 +250,6 @@ predict_tree <- function(split)
     predict(assessment(split), type = 'class') %>%
     bind_cols(assessment(split))
 
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_tree)) %>% unnest(pred) %>% 
-    metric_set(accuracy, kap, j_index)(truth = playlist, estimate = .pred_class)
-
-jazzstyles_class %>% 
-    fit(jazzstyles_tree, playlist ~ ., data = .) %>% 
-    pluck('fit') %>%
-    summary
-```
-***
-We've already gotten some hints on what features the playlists of my corpus are based, and thus what features Spotify considers distinctive for these jazz styles. If we run a confusion matrix for the first 20 tracks of all three lists, it turns out that swing is definitely the most distinctive one. Apparantly bebop and swing have a lot more in common according to spotify's features. This is also something that previous plots suggested somewhat.
-
-### The distinctive spotify features
-
-```{r}
-jazzstyles_forest <- 
-    rand_forest(mode = 'classification') %>% 
-    set_engine('randomForest')
-predict_forest <- function(split)
-    fit(jazzstyles_forest, playlist ~ ., data = analysis(split)) %>% 
-    predict(assessment(split), type = 'class') %>%
-    bind_cols(assessment(split))
-
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_forest)) %>% 
-    unnest(pred) %>% 
-    metric_set(accuracy, kap, j_index)(truth = playlist, estimate = .pred_class)
-
-jazzstyles_class %>% 
-    fit(jazzstyles_forest, playlist ~ ., data = .) %>% 
-    pluck('fit') %>% 
-    randomForest::varImpPlot()
-```
-
-***
-The question now is what are the distinctive features? When I run the forest plot, the results differ but the distinctive features are always more or less duration, valence and timbre components, specifically number 2, 3, 6 and 12. Especially number 6 scores very high.
-
-### Confusion matrix reconsidered
-
-```{r}
 predict_knn_reduced <- function(split)
     fit(
         jazzstyles_knn, 
@@ -197,9 +257,6 @@ predict_knn_reduced <- function(split)
         data = analysis(split)) %>% 
     predict(assessment(split), type = 'class') %>%
     bind_cols(assessment(split))
-jazzstyles_cv %>% 
-    mutate(pred = map(splits, predict_knn_reduced)) %>% unnest(pred) %>% 
-    metric_set(accuracy, kap, j_index)(truth = playlist, estimate = .pred_class)
 
 jazzstyles_cv %>% 
     mutate(pred = map(splits, predict_knn_reduced)) %>% unnest(pred) %>% 
@@ -208,7 +265,7 @@ jazzstyles_cv %>%
 ```
 
 ***
-When we rerun the confusion matrix, but with only the "important" features taken into account, there is barely any change in the results.
+We've already gotten some hints on what features the playlists of my corpus are based, and thus what features Spotify considers distinctive for these jazz styles. If we run a confusion matrix for the first 20 tracks of all three lists, it turns out that swing is definitely the most distinctive one. Apparantly bebop and swing have a lot more in common according to spotify's features. This is also something that previous plots suggested somewhat, and is now confirmed. This means that the features of Spotify do not succeed in telling the difference between cool and bebop, although they do manage to recognize swing.
 
 ### The disctinctive spotify features mapped
 
@@ -238,9 +295,9 @@ jazzstyles_ %>%
 ```
 
 ***
-In these plots I showed the differences between the styles with the most distinctive features according to spotify. We see that indeed duration seems to be quite characteristic for the style of tunes.Also in valence we see quite the difference between swing and cool, while bebop is more spread out.The timbre components don't seem to be that much of a big deal, except for component number 6. This is due a few heavy outliers!
+In these plots I showed the differences between the styles with the most distinctive features according to Spotify. We see that indeed duration seems to be quite characteristic for the style of tunes. Also in valence we see quite the difference between swing and cool, while bebop is more spread out. The timbre components don't seem to be that much of a big deal, except for component number 6. This is due a few heavy outliers!
 
-### Harmony
+### Harmony in Jazz
 
 ```{r}
 circshift <- function(v, n) {if (n == 0) v else c(tail(v, n), head(v, -n))}
@@ -386,128 +443,65 @@ take_five %>%
     theme_minimal() +
     labs(x = 'Time (s)', y = '')
 ```
+
+***
 I wanted to try to show some differences between harmony in cool jazz and previous styles. Although the harmonies of the cool era are similar to that of the previous styles, there are a few new trends, like more classical orientated harmony and also modal harmony. A lot of modal tunes consist of large sections of just one chord, instead of the more usual tonal progressions, and this is something I hoped to show with keygrams en chordograms. However I could not find examples that worked. Actually I couldn't even find tracks where the key or a progression at any point was clear from the plot, even not in a "one chord tune" like Miles Davis' So What. I think the reason for this is that jazz harmony is usually at least five-part. This means there five, six, or even seven independed harmonic voices from which the chords are built. This makes makes it really hard to detect the harmony especially with a walking bass. A solution for this could be to not only detect the pitch classes, but also show in what order the pitches are constructed. In jazz harmony the thirds and sevens are almost always voiced on the low side, as these make the basic harmonic progression clear, while the other voices, also reffered to as extensions, are used for coloring on top. This way the harmony is perfectly clear eventhough the chords have a lot of notes. I added some the examples of tracks that I tried to interpret. First to last are: Alone Together by Kenny Dorham, So What by Miles Davis and Take Five by the Dave Brubeck quartet.
 
-### introduction
 
+### The form of Jazz: Bebop
 ```{r}
-danceability_bebop <-
-  bebop %>% summarise(M = mean(danceability, na.rm = TRUE), SD =               sd(danceability, na.rm = TRUE))
-danceability_swing <-
-  swing %>% summarise(M = mean(danceability, na.rm = TRUE), SD =               sd(danceability, na.rm = TRUE))
-danceability_cool <-
- cool %>% summarise(M = mean(danceability, na.rm = TRUE), SD =               sd(danceability, na.rm = TRUE))
-danceability <-
- danceability_bebop %>% mutate(playlist = "bebop") %>%
- bind_rows(danceability_cool %>% mutate(playlist = "cool")) %>%
- bind_rows(danceability_swing %>% mutate(playlist = "swing"))
+scrapple <- 
+    get_tidy_audio_analysis('7flQESHoCoDzirWF4IkKGq') %>% 
+    compmus_align(bars, segments) %>% 
+    select(bars) %>% unnest(bars) %>% 
+    mutate(
+        pitches = 
+            map(segments, 
+                compmus_summarise, pitches, 
+                method = 'mean', norm = 'manhattan')) %>% 
+    mutate(
+        timbre = 
+            map(segments, 
+                compmus_summarise, timbre, 
+                method = 'mean',))
 
-
-energy_bebop <-
-  bebop %>% summarise(M = mean(energy, na.rm = TRUE), SD =                     sd(energy, na.rm = TRUE))
-energy_swing <-
-  swing %>% summarise(M = mean(energy, na.rm = TRUE), SD =                     sd(energy,       na.rm = TRUE))
-energy_cool <-
-  cool %>% summarise(M = mean(energy, na.rm = TRUE), SD =                     sd(energy, na.rm = TRUE))
-energy <-
- energy_bebop %>% mutate(playlist = "bebop") %>%
- bind_rows(energy_cool %>% mutate(playlist = "cool")) %>%
- bind_rows(energy_swing %>% mutate(playlist = "swing"))
-  
-
-loudness_bebop <-  
-bebop %>% summarise(M = mean(loudness, na.rm = TRUE), SD = sd(loudness, na.rm = TRUE))
-loudness_swing <-
-swing %>% summarise(M = mean(loudness, na.rm = TRUE), SD = sd(loudness, na.rm = TRUE))
-loudness_cool <-
-cool %>% summarise(M = mean(loudness, na.rm = TRUE), SD = sd(loudness, na.rm = TRUE))
-loudness <-
- loudness_bebop %>% mutate(playlist = "bebop") %>%
- bind_rows(loudness_cool %>% mutate(playlist = "cool")) %>%
- bind_rows(loudness_swing %>% mutate(playlist = "swing"))
-
-valence_bebop <-
-bebop %>% summarise(M = mean(valence, na.rm = TRUE), SD = sd(valence))
-valence_swing <-
-swing %>% summarise(M = mean(valence, na.rm = TRUE), SD = sd(valence))
-valence_cool <-
-cool %>% summarise(M = mean(valence, na.rm = TRUE), SD = sd(valence))
-valence <-
- valence_bebop %>% mutate(playlist = "bebop") %>%
- bind_rows(valence_cool %>% mutate(playlist = "cool")) %>%
- bind_rows(valence_swing %>% mutate(playlist = "swing"))
-
-tempo_bebop <-
-bebop %>% summarise(M = mean(tempo, na.rm = TRUE), SD = sd(tempo, na.rm = TRUE))
-tempo_swing <-
-swing %>% summarise(M = mean(tempo, na.rm = TRUE), SD = sd(tempo, na.rm = TRUE))
-tempo_cool <-
-cool %>% summarise(M = mean(tempo, na.rm = TRUE), SD = sd(tempo, na.rm = TRUE))
-tempo <-
- tempo_bebop %>% mutate(playlist = "bebop") %>%
- bind_rows(tempo_cool %>% mutate(playlist = "cool")) %>%
- bind_rows(tempo_swing %>% mutate(playlist = "swing"))
-```
-```{r}
-danceability %>%
-   ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'danceability')
-
-energy %>%
-  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'energy')
-
-loudness %>%
-  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'loudness')
-
-valence %>%
-  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'valence')
-
-tempo %>%
-  ggplot(aes(x = playlist, y = M)) + geom_bar(stat = "identity") + labs(title = 'tempo')
-```
-
-***
-For my portfolio I want to check out and compare playlists of different jazz genres, and see whether Spotify recognizes similar characteristic differences between the styles in their measured features as expected in these genres. The playlist I am going to use are the "sound of.." playlists. For this comparison it seems to me that the best styles to research are the most common and famous and big directions in jazz: swing, bebop, cool jazz. A difference to expect would for example be danceability between swing and cool jazz, as swing originated as dance music and later jazz changed more to a concert style of music. In order to do so I took the means of features that seemed relevant to see if there were any points of interest.
-
-The comparison between cool jazz and swing does however give the expected results. Danceability, energy and valence are higher in swing, as one would expect it to be in dance music. Also there are less tunes with odd time signature in swing, which I’d say would also be more expected in dance music. I noticed however that one of the tunes that was listed as odd time signature tune in the bebop list was Take Five by the Dave Brubeck Quartet. I don’t think that Take Five could be classified as bebop tune in anyway, so this raises the question whether these list are made carefully enough and with what criteria the tunes are divided among the styles.
-***
-
-
-
-### Scatterplots
-
-```{r}
-jazzstyles %>%
-  ggplot(aes(x = valence, y = energy, color = playlist)) + geom_point()
-
-jazzstyles %>%
-  ggplot(aes(x = danceability, y = tempo, color = playlist)) + geom_point()
-```
-
-***
-These two scatterplots visualize the findings from the first assignment. The differences between the styles are as expected, although the differences are not actually that big: swing is more danceable and has more valence than bebop and cooljazz and energy is lowest in cooljazz. A point of interest is that the scatterplot of energy and valence seems to suggest a positive correlation between the two. Although this is ofcourse not enough evidence, this could mean that Spotify uses one of these features to compute the other one.
-***
-
-### Chroma and timbre
-
-```{r}
-rosita <- 
-    get_tidy_audio_analysis('3tzOXO0tEqbI4SCrSDhZ4J') %>% 
-    select(segments) %>% unnest(segments) %>% 
-    select(start, duration, pitches)
-
-rosita %>% 
-    mutate(pitches = map(pitches, compmus_normalise, 'euclidean')) %>% 
-    compmus_gather_chroma %>% 
+scrapple %>% 
+    compmus_self_similarity(pitches, 'manhattan') %>% 
     ggplot(
         aes(
-            x = start + duration / 2, 
-            width = duration, 
-            y = pitch_class, 
-            fill = value)) + 
+            x = xstart + xduration / 2, 
+            width = xduration,
+            y = ystart + yduration / 2,
+            height = yduration,
+            fill = d)) + 
     geom_tile() +
-    labs(x = 'Time (s)', y = NULL, fill = 'Magnitude') +
-    theme_minimal()
+    coord_fixed() +
+    scale_fill_viridis_c(option = 'E', guide = 'none') +
+    theme_classic() +
+    labs(x = '', y = '')
+
+scrapple %>% 
+    compmus_self_similarity(timbre, 'manhattan') %>% 
+    ggplot(
+        aes(
+            x = xstart + xduration / 2, 
+            width = xduration,
+            y = ystart + yduration / 2,
+            height = yduration,
+            fill = d)) + 
+    geom_tile() +
+    coord_fixed() +
+    scale_fill_viridis_c(option = 'E', guide = 'none') +
+    theme_classic() +
+    labs(x = '', y = '')
+
 ```
+
+***
+Here you see a chroma and a timbre self-similarity matrix of a Charlie Parker tune: Scrapple from the Apple. From the chroma self-similarity matrix, the first one, we don't learn much. Most of the track is improvised and the comping instrument, piano in this case, chooses voicings to taste and in an impulse. Also the recording quality in the bebop era (mainly the 40's) is quite primitive. That's why we don't see the form reflected in the pitch content. The timbre self similarity matrix tells us a lot more however. If you look vaguely you see there are four choruses. What the form of the choruses is, is not really clear. However we can clearly distinct the choruses based on timbre, because the first chorus is the theme melody played in unison, the second chorus is the sax solo, and the third chorus trunmpet solo. The last block in the plot, the last chorus is divided in three parts. The first two A's are the piano solo, the B part is a bass solo, and the last A is the theme again. The form might not be very clear, but you can see the choruses and the arrangement.
+
+
+### The form of Jazz: Cool
 
 ```{r}
 rosita <- 
@@ -540,23 +534,8 @@ rosita %>%
     theme_classic() +
     labs(x = '', y = '')
 
-confirmation <- 
-    get_tidy_audio_analysis('7pNfEYVT7Sfs9PDPIuzusc') %>% 
-    compmus_align(bars, segments) %>% 
-    select(bars) %>% unnest(bars) %>% 
-    mutate(
-        pitches = 
-            map(segments, 
-                compmus_summarise, pitches, 
-                method = 'mean', norm = 'manhattan')) %>% 
-    mutate(
-        timbre = 
-            map(segments, 
-                compmus_summarise, timbre, 
-                method = 'mean',))
-
-confirmation %>% 
-    compmus_self_similarity(pitches, 'manhattan') %>% 
+rosita %>% 
+    compmus_self_similarity(timbre, 'manhattan') %>% 
     ggplot(
         aes(
             x = xstart + xduration / 2, 
@@ -569,6 +548,36 @@ confirmation %>%
     scale_fill_viridis_c(option = 'E', guide = 'none') +
     theme_classic() +
     labs(x = '', y = '')
-
 ```
 
+***
+In cool jazz, contrary to bebop, the form is usually more complex and more throughcomposed. Literally almost every bebop tune has a common song form like AABA, ABAC or AAB. In the larger structure it is almost always a full chorus of theme melody, then several, sometimes a lot of choruses with solo's, and then again the theme melody as ending. The previous bebop example from Parker is already more rare in it's structure. In cool jazz however, even with the same tunes with the common forms I just mentioned, you'll find more complex arrangements. Often less choruses, but the seperate parts are more distinct. We see this in Coleman Hawking's rendition of Rosita. Both the chroma (first) and timbre (second) self-similarity matrices clearly show the form. The chroma plot is even a bit more clear because the way the melody is played and comped is less improvised and more composed. You could say the form of the full track is ABCB. First we have the intro and the A part of the melody. Second we have the B part of the melody which is the second time very cleary the same in the chroma self-similarity matrix. In between the B parts is a chorus with a solo. Because this track has more compositional elements, the form in the matrices is more clear than with bebop.
+
+### Time Out!
+
+```{r}
+kathy_waltz <- get_tidy_audio_analysis('3XfaSRXfGuWT1rrn9lWx30')
+
+kathy_waltz %>% 
+    tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) %>% 
+    ggplot(aes(x = time, y = bpm, fill = power)) + 
+    geom_raster() + 
+    scale_fill_viridis_c(guide = 'none') +
+    labs(x = 'Time (s)', y = 'Tempo (BPM)') +
+    theme_classic()
+```
+
+***
+A really nice and interesting cool jazz tune is Kathy's Waltz on Dave Brubeck's "Time Out", one of the most important cool jazz albums. It's the first really famous jazz album with tunes in odd time signatures, and more quite complex rhythmical tricks, hence the name of the album. The tune starts in 4/4 on approximately 125 BPM. After the theme melody the band metrically modulates to 6/8, making the quarternote in the first time signature equal to a dotted eighth in the second time signature. This is done by displacing the accents and harmonic rythm. However there is a second pulse created by the hi-hat every two beats, so on the first, the third and the fifth eighth note beat. This means there is also a 3/4 time signature going on, although the 6/8 seems dominant to me because the bass pattern divides the bar into two equal parts of three eighth note beats. If a quarter note of the first time signature equals a dotted eight note in the second time signature, the relationship between the tempi would be 1 : 0,75. This means that the new tempo would be approximately 94, which is indeed what the tempogram shows! 
+
+At one point in Brubeck's solo (around 180 seconds), he metrically modulates back to the old tempo in 4/4 while the rest of the band stays in 6/8, meaning that at that point there are two tempi at the same time, but because of their rhythmical relationship (quarter note equals a dotted eighth note) they can actually coexist. I would not have expected the tempogram to pick up on this, but it really does! You can very clearly see the two tempi going on at the same time. Actually, at this point the whole band together plays three time signatures! At that time this was really new in jazz music, and it was brought by the cool jazz players. In bebop, playing in 3/4 is already extremely rare, so this album was a pretty extreme step in a new direction.
+
+
+### Contributions
+
+From what I have seen so far, computational methods and Spotify features have something when it comes to analyzing jazz. Eventhough later on in the course I discovered that the playlists of my corpus, might not have been put together too carefully, the expected differences between different styles of jazz were absolutely clearly visible. However, I do think that the computing of these features by no means beats the human ear, and that they mostly confirm assumptions that are already made. It seems to me that this is mostly due to the audio features of spotify, especially when it's mostly unclear how these are computed. Having said that, I think that the tools in the compmus package do a great job and can be really useful! Determining the form with chroma en pitch self-similarity matrices works quite well. I also think that the chordograms have huge potential, because eventhough the aren't suited for jazz now, if they would take the way that voicings are build up into account, as I suggested, they could be just as great for jazz and classical music, and even recognize which is which. I was especially impressed by the tempogram, which is not only able to detect tempocurves through pieces, but can also detect two different tempi at the same time!
+
+As far as my own work is concerned, I have not learned a lot more about the music itself, but I have learned a huge deal about what you can do with a computer to extract information about the music out of it! My findings would then obviously be mostly relevant to someone who would be interested in what different styles of jazz are and how you this is reflected in the audio. What I think is most important about what I found is that with a little further development, especially the chroma features regarding harmony, computational methods for jazz music could be very strong and not lacking at all.
+
+Thank you for reading!
+Huub
